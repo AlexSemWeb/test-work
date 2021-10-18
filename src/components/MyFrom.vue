@@ -185,6 +185,7 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-row class="justify-center mt-4">{{ answer }}</v-row>
   </v-container>
 </template>
 <script>
@@ -257,6 +258,7 @@ export default {
     isSending: false,
     selectedRights: ["1"],
     snackbar: false,
+    answer: "",
   }),
 
   methods: {
@@ -302,7 +304,7 @@ export default {
       this.timeout().then(() => {
         this.isSending = false;
         this.snackbar = true;
-        console.log(JSON.stringify(data));
+        this.answer = JSON.stringify(data);
       });
     },
     clear() {
