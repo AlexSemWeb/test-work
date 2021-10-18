@@ -260,20 +260,14 @@ export default {
     snackbar: false,
     answer: "",
   }),
-
-  methods: {
-    generatePassword() {
-      let password = nanoid();
-      this.password = password;
-      this.confirmation = password;
-    },
-    formatPhoneNumber(phoneNumberString) {
-      var cleaned = ("" + phoneNumberString).replace(/\D/g, "");
+  computed: {
+    formatPhoneNumber() {
+      var cleaned = ("" + this.phoneNumber).replace(/\D/g, "");
       var match = cleaned.match(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})$/);
       if (match) {
         return [
           "+",
-          match[1],
+          match[1] === "8" ? "7" : "7",
           "(",
           match[2],
           ")",
@@ -286,6 +280,14 @@ export default {
       }
       return "";
     },
+  },
+  methods: {
+    generatePassword() {
+      let password = nanoid();
+      this.password = password;
+      this.confirmation = password;
+    },
+
     timeout() {
       return new Promise((resolve) => setTimeout(resolve, 1000));
     },
@@ -298,7 +300,7 @@ export default {
         is_admin: this.isAdmin,
         user_rights: this.selectedRights,
         password: this.password,
-        phone: this.formatPhoneNumber(this.phoneNumber),
+        phone: this.formatPhoneNumber,
       };
       this.isSending = true;
       this.timeout().then(() => {
