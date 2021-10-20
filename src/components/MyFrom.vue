@@ -185,6 +185,21 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-snackbar
+      v-model="isError"
+      :multi-line="true"
+      color="error"
+      :timeout="2000"
+      top
+      right
+    >
+      Произошла ошибка
+      <template v-slot:action="{ attrs }">
+        <v-btn color="white" text v-bind="attrs" @click="isError = false">
+          Закрыть
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-row class="justify-center mt-4">{{ answer }}</v-row>
   </v-container>
 </template>
@@ -256,6 +271,7 @@ export default {
     confirmation: "",
     show1: false,
     isSending: false,
+    isError: false,
     selectedRights: ["1"],
     snackbar: false,
     answer: "",
@@ -303,11 +319,15 @@ export default {
         phone: this.formatPhoneNumber,
       };
       this.isSending = true;
-      this.timeout().then(() => {
-        this.isSending = false;
-        this.snackbar = true;
-        this.answer = JSON.stringify(data);
-      });
+      this.timeout()
+        .then(() => {
+          this.isSending = false;
+          this.snackbar = true;
+          this.answer = JSON.stringify(data);
+        })
+        .catch(() => {
+          this.isSending = false;
+        });
     },
     clear() {
       this.name = "";
