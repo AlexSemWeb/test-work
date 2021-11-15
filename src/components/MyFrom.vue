@@ -62,7 +62,7 @@
             <validation-provider v-slot="{ errors }" name="Должность">
               <v-select
                 v-model="position"
-                :items="items"
+                :items="positions"
                 item-text="name"
                 item-value="id"
                 :error-messages="errors"
@@ -123,13 +123,13 @@
             >
               <v-text-field
                 v-model="password"
-                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                :type="show1 ? 'text' : 'password'"
+                :append-icon="isShowPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="isShowPassword ? 'text' : 'password'"
                 label="Пароль*"
                 hint="Длина пароля должна быть не меньше 8"
                 :error-messages="errors"
                 counter
-                @click:append="show1 = !show1"
+                @click:append="isShowPassword = !isShowPassword"
                 required
                 :success="valid"
               ></v-text-field>
@@ -200,7 +200,6 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <v-row class="justify-center mt-4">{{ answer }}</v-row>
   </v-container>
 </template>
 <script>
@@ -259,7 +258,7 @@ export default {
     phoneNumber: "",
     email: "",
     position: null,
-    items: [
+    positions: [
       { id: 1, name: "Administrator" },
       { id: 2, name: "Software Engineer" },
       { id: 3, name: "Content manager" },
@@ -269,17 +268,16 @@ export default {
     menu: false,
     password: "",
     confirmation: "",
-    show1: false,
+    isShowPassword: false,
     isSending: false,
     isError: false,
     selectedRights: ["1"],
     snackbar: false,
-    answer: "",
   }),
   computed: {
     formatPhoneNumber() {
-      var cleaned = ("" + this.phoneNumber).replace(/\D/g, "");
-      var match = cleaned.match(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})$/);
+      let cleaned = ("" + this.phoneNumber).replace(/\D/g, "");
+      let match = cleaned.match(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})$/);
       if (match) {
         return [
           "+",
@@ -307,7 +305,7 @@ export default {
     timeout() {
       return new Promise((resolve) => setTimeout(resolve, 1000));
     },
-    submit() {
+    async submit() {
       let data = {
         nickname: this.name,
         email: this.email,
@@ -319,11 +317,11 @@ export default {
         phone: this.formatPhoneNumber,
       };
       this.isSending = true;
-      this.timeout()
+      await this.timeout()
         .then(() => {
           this.isSending = false;
           this.snackbar = true;
-          this.answer = JSON.stringify(data);
+          console.log(JSON.stringify(data));
         })
         .catch(() => {
           this.isSending = false;
@@ -338,7 +336,7 @@ export default {
       this.birthdate = "";
       this.password = "";
       this.confirmation = "";
-      this.show1 = false;
+      this.isShowPassword = false;
       this.isDelete = false;
       this.$refs.observer.reset();
     },
